@@ -6,6 +6,8 @@ from colored import *
 from get_input import get_input
 from screen import get_screen_text
 
+print('asdfa')
+
 load_dotenv()
 
 # INTRO_TEXT = """
@@ -25,8 +27,6 @@ INTRO_TEXT = """
 |_| \_|   |_|   /_/  \_\     
 """.strip()
 
-os.system('clear')
-
 class GroqAI:
     model = "llama-3.3-70b-versatile"
 
@@ -34,81 +34,80 @@ class GroqAI:
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
     def get_llm_response(self, messages):
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-        )
+        response = self.client.chat.completions.create(model=self.model, messages=messages)
         output = response.choices[0].message.content.strip()
 
         if output and (output[0] == output[-1]) and output.startswith(("'", '"')):
             output = output[1:-1]
 
         return output
-    pass
 
 def get_prompt():
 	prompt = None
 	try:
 		prompt = get_input('>>> ').strip()
 	except KeyboardInterrupt as e:
-		cprint('>>>', "KeyboardInterrupt", RED)
+		cprint('>>>', "KeyboardInterrupt", color=RED)
 	return prompt
 
 def greet():
-    print(INTRO_TEXT)
-    print()
-    print('[esc+enter]: submit the prompt\n[enter]:     enter a new line\n')
-greet()
+    cprint(INTRO_TEXT+'\n', color=YELLOW)
+    cprint('[esc+enter]: submit the prompt\n[enter]:     enter a new line\n', color=MAGENTA)
 
-llm = GroqAI()
-
-messages = [
-    {
-        'role': 'system',
-        'content': """
-        You are an helpful screen-aware CLI agent named nyx.
-        You respond to users in a short, concise and informative way, and you responses should be formated in a way that should be clearly visible on cli.
-        """
-    }
-]
-
-while True:
-    try:
-        prompt = get_prompt()
-
-        # check for commands
-        if prompt==None: continue
-        if prompt.startswith('/screen'):
-            screen_text = get_screen_text()
-            prompt = f"""
-            screen data (ocr data): {screen_text}
-            query: {prompt[8:]}
+def main(llm):
+    messages = [
+        {
+            'role': 'system',
+            'content': """
+            You are an helpful screen-aware CLI agent named nyx.
+            You respond to users in a short, concise and informative way, and you responses should be formated in a way that should be clearly visible on cli.
             """
-        if prompt=='/clear': os.system('clear'); greet(); continue
-        if prompt=='/bye' or prompt=='/exit': break
-        if prompt=='/empty':
-            messages = []
-            cprint('>>>', "Chat history cleared!!", RED)
-            continue
-        if prompt=='/help':
-            cprint('>>>', "Available commands:", RED)
-            cprint('>>>', "/screen: enable agent to see your screen", RED)
-            cprint('>>>', "/clear: clear the screen", RED)
-            cprint('>>>', "/empty: clear the messages", RED)
-            cprint('>>>', "/bye: exit the program", RED)
-            cprint('>>>', "/help: show this help message", RED)
-            continue
+        }
+    ]
+    
+    while True:
+        try:
+            prompt = get_prompt()
 
-        messages.append({
-            'role': 'user',
-            'content': prompt
-        })
-        res = llm.get_llm_response(messages)
-        messages.append({
-            'role': 'assistant',
-            'content': res
-        })
-        cprint('>>>', res, RED)
-    except Exception as e:
-        cprint('>>>', "Sorry I'm unable to responsed", RED)
+            # check for commands
+            if prompt==None: continue
+            if prompt.startswith('/screen'):
+                screen_text = get_screen_text()
+                prompt = f"""
+                screen data (ocr data): {screen_text}
+                query: {prompt[8:]}
+                """
+            if prompt=='/clear': os.system('clear'); greet(); continue
+            if prompt=='/bye' or prompt=='/exit': break
+            if prompt=='/empty':
+                messages = []
+                cprint('>>>', "Chat history cleared!!", color=MAGENTA)
+                continue
+            if prompt=='/help':
+                cprint('>>>', "Available commands:", color=MAGENTA)
+                cprint('>>>', "/screen: enable agent to see your screen", color=MAGENTA)
+                cprint('>>>', "/clear: clear the screen", color=MAGENTA)
+                cprint('>>>', "/empty: clear the messages", color=MAGENTA)
+                cprint('>>>', "/bye: exit the program", color=MAGENTA)
+                cprint('>>>', "/help: show this help message", color=MAGENTA)
+                continue
 
+            messages.append({
+                'role': 'user',
+                'content': prompt
+            })
+            res = llm.get_llm_response(messages)
+            messages.append({
+                'role': 'assistant',
+                'content': res
+            })
+            cprint('>>>', res, color=CYAN)
+        except Exception as e:
+            cprint('>>>', "Sorry I'm unable to responsed", color=RED)
+
+if __name__ == '__main__':
+    os.system('clear')
+    greet()
+
+    llm = GroqAI()
+    main(llm)
