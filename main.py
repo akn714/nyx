@@ -6,8 +6,6 @@ from colored import *
 from get_input import get_input
 from screen import get_screen_text
 
-print('asdfa')
-
 load_dotenv()
 
 # INTRO_TEXT = """
@@ -92,17 +90,12 @@ def main(llm):
                 cprint('>>>', "/help: show this help message", color=MAGENTA)
                 continue
 
-            messages.append({
-                'role': 'user',
-                'content': prompt
-            })
+            messages.append({ 'role': 'user', 'content': prompt })
             res = llm.get_llm_response(messages)
-            messages.append({
-                'role': 'assistant',
-                'content': res
-            })
+            messages.append({ 'role': 'assistant', 'content': res }) 
             cprint('>>>', res, color=CYAN)
         except Exception as e:
+            messages.append({ 'role': 'assistant', 'content': "Sorry I'm unable to responsed" })
             cprint('>>>', "Sorry I'm unable to responsed", color=RED)
 
 if __name__ == '__main__':

@@ -1,0 +1,7 @@
+python-dotenv
+groq
+mss
+opencv-python
+pytesseract
+numpy
+prompt_toolkit
