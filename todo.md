@@ -1,6 +1,7 @@
 ### Reading list
 - https://adasci.org/building-a-screen-aware-ai-with-screenenv-and-tesseract
 - https://github.com/niuzaisheng/ScreenAgent
+- [x] https://medium.com/@sumitgrakhonde/from-clicks-to-commands-a-visual-ai-that-understands-your-screen-768d60c788c9
 
 
 ### Tasks
